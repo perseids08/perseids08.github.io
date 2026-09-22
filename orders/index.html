@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#d74c28">
+  <meta name="description" content="记下两个人的拿手菜，点一份想一起吃的饭。">
+  <title>两人食堂 · 今天想吃什么</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./menu-data.js" defer></script>
+  <script src="./storage.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="两人食堂首页"><span class="brand-icon" data-icon="utensils"></span><span>两人食堂<small>OUR LITTLE KITCHEN</small></span></a>
+    <nav role="tablist" aria-label="食堂导航">
+      <button id="menu-tab" role="tab" aria-selected="true" aria-controls="menu-view" class="nav-active" data-action="tab" data-tab="menu">今日菜单</button>
+      <button id="orders-tab" role="tab" aria-selected="false" aria-controls="orders-view" tabindex="-1" data-action="tab" data-tab="orders">已下的单 <span id="nav-count" class="nav-count"></span></button>
+    </nav>
+    <div class="couple" aria-label="我和男朋友"><span>我</span><i data-icon="heart"></i><span>他</span></div>
+  </header>
+  <main class="shell">
+    <section class="welcome"><div><div class="eyebrow"><i data-icon="heart"></i>一屋 · 两人 · 三餐</div><h1>今天，想吃点什么<span>？</span></h1><p>把想吃的加入菜单，剩下的交给掌勺的人。</p></div><div class="welcome-note"><i data-icon="chef"></i><span>你来点菜<br><strong>我来下厨</strong></span></div></section>
+    <p class="storage-note"><i data-icon="device"></i>菜单和订单保存在当前浏览器，不会自动同步到其他设备。</p>
+    <div id="storage-error" class="error-banner" role="alert" hidden><span id="storage-error-text"></span><button class="text-button" data-action="retry"><i data-icon="refresh"></i>重试</button></div>
+    <section id="menu-view" role="tabpanel" aria-labelledby="menu-tab">
+      <div class="work-area"><section aria-label="菜品菜单"><div class="section-head"><div><h2>我们的拿手菜 <span id="dish-count">0</span></h2><p>把会做的菜，慢慢攒成我们的小菜单。</p></div><button class="button secondary" data-action="add" data-needs-storage><i data-icon="plus"></i>添加菜品</button></div><div id="dish-list" class="dish-grid"></div><p id="example-note" class="example-note">有配图的菜品是初始示例，可编辑或删除，换成你们的拿手菜。</p></section>
+        <aside class="order-panel" id="current-order" aria-label="本次点菜单"><div class="receipt-top"><div class="eyebrow">TODAY’S ORDER</div><h2>这顿想吃 <span id="selected-count">0</span></h2><p>两个人的饭，刚刚好。</p></div><div id="selected-list" class="receipt-content"></div><div class="receipt-footer"><div class="order-summary"><span id="order-summary">用心做的每一餐</span><i data-icon="heart"></i></div><button id="submit-order" class="button primary" data-action="submit" disabled>就吃这些 <i data-icon="arrow"></i></button><p>和喜欢的人，吃喜欢的饭。</p></div></aside>
+      </div>
+      <a href="#current-order" id="mobile-order" class="mobile-order" hidden><i data-icon="basket"></i><span>这顿想吃 <strong id="mobile-count">0</strong> 道菜</span><span>查看菜单 <i data-icon="arrow"></i></span></a>
+    </section>
+    <section id="orders-view" class="history" role="tabpanel" aria-labelledby="orders-tab" hidden><div class="section-head"><div><h2>一起吃过的每一餐 <span id="history-count">0</span></h2><p>点过的菜，都好好记在这里。</p></div><button class="button secondary" data-action="tab" data-tab="menu"><i data-icon="plus"></i>再点一餐</button></div><div id="history-list" class="history-grid"></div></section>
+    <footer>两人食堂 <span>·</span> 好好吃饭，慢慢相爱 <i data-icon="heart"></i><button data-action="credits">图片来源</button></footer>
+  </main>
+  <noscript><p class="error-banner">请开启浏览器的 JavaScript，以使用添加菜品和点菜功能。</p></noscript>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+  <dialog id="dish-dialog" class="dish-dialog" aria-labelledby="editor-title" aria-describedby="editor-description">
+    <button type="button" class="dialog-close" data-action="close-editor" aria-label="关闭菜品编辑"><i data-icon="close"></i></button>
+    <h2 id="editor-title" class="modal-title"><i data-icon="chef"></i><span id="editor-title-text">添一道拿手菜</span></h2>
+    <p id="editor-description" class="dialog-description">从会做的一道菜开始，慢慢丰富我们的小食堂。</p>
+    <form id="dish-form" class="dish-form">
+      <label for="dish-name">菜名 <span>*</span></label><input id="dish-name" name="name" maxlength="30" placeholder="例如：你最爱的糖醋排骨" required autocomplete="off">
+      <label for="dish-description">一句介绍 <small>选填</small></label><textarea id="dish-description" name="description" maxlength="80" placeholder="写下这道菜的特别之处…" rows="2"></textarea>
+      <fieldset><legend>谁会做 <span>*</span><small>可以同时选择两个人</small></legend><div class="cook-options"><label class="cook-option"><span class="cook-avatar hers">我</span><span><strong>我会做</strong><small>我的拿手菜</small></span><input id="cook-me" type="checkbox" name="cooks" value="1" aria-label="我会做" checked></label><label class="cook-option"><span class="cook-avatar his">他</span><span><strong>他会做</strong><small>男朋友的拿手菜</small></span><input id="cook-him" type="checkbox" name="cooks" value="2" aria-label="他会做"></label></div></fieldset>
+      <p id="form-error" class="form-error" role="alert" hidden></p>
+      <div class="form-actions"><button id="delete-dish" type="button" class="delete-button" data-action="start-delete" hidden><i data-icon="trash"></i>删除这道菜</button><button class="button primary" type="submit"><i data-icon="check"></i>保存菜品</button></div>
+    </form>
+  </dialog>
+  <dialog id="delete-dialog" class="confirm-dialog" aria-labelledby="delete-title" aria-describedby="delete-description"><h2 id="delete-title">删除这道菜？</h2><p id="delete-description" class="dialog-description">删除后可以重新添加，已经下单的菜品记录会保留。</p><p id="delete-error" class="form-error" role="alert" hidden></p><div class="form-actions"><button class="button secondary" data-action="cancel-delete" autofocus>先留着</button><button class="button primary" data-action="confirm-delete">确认删除</button></div></dialog>
+  <dialog id="credits-dialog" class="credits-dialog" aria-labelledby="credits-title"><button class="dialog-close" data-action="close-credits" aria-label="关闭图片来源"><i data-icon="close"></i></button><h2 id="credits-title">菜品图片来源</h2><p class="dialog-description">示例照片来自 Wikimedia Commons，已缩小、转换格式并适配裁切展示。图片按各自原始许可提供，不代表你们的实际成品。</p><div id="credits-list" class="credits-list"></div></dialog>
+</body>
+</html>
